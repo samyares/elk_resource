@@ -107,6 +107,8 @@ services:
     volumes:
       - kibana_config:/usr/share/kibana/config
       - kibana_data:/usr/share/kibana/data
+      - "/etc/localtime:/etc/localtime:ro"
+      - "/etc/timezone:/etc/timezone:ro"
     ports:
       - 9107:5601
     healthcheck:
