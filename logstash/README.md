@@ -1,4 +1,5 @@
-**send syslog to special host:
+# send syslog to special host:
+
   change rsyslog config and add below line to it (nano /etc/rsyslog.conf)
   
   *.* @@192.168.5.68:5144 // send all facility (first*) in all log level (second*) send to felan IP and port 
