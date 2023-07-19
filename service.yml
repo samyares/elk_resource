@@ -1,4 +1,10 @@
 version: "3.9"
+
+x-default-logs: &default-opts
+  logging:
+    options:
+      max-size: "10m"
+
 networks:
   sam-network:
 
@@ -37,6 +43,7 @@ services:
         hard: 65536
     ports:
       - 9106:9200
+    
     deploy:
       replicas: 1
       restart_policy:
@@ -46,10 +53,8 @@ services:
         limits:
           cpus: "4"
           memory: 2G
-    logging:
-      options:
-        max-file: 3
-        max-size: 1G
+    <<:*default-opts
+      
 
   logstash:
     image: logstash:7.17.10
@@ -78,10 +83,7 @@ services:
         limits:
           cpus: "2"
           memory: 2G
-    logging:
-      options:
-        max-file: 3
-        max-size: 1G
+    <<:*default-opts
 
   kibana:
     image: kibana:7.17.10
@@ -111,7 +113,4 @@ services:
         limits:
           cpus: "2"
           memory: 2G
-    logging:
-      options:
-        max-file: 3
-        max-size: 1G
+    <<:*default-opts
