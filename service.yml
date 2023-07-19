@@ -1,0 +1,108 @@
+version: "3.9"
+networks:
+  sam-network:
+
+volumes:
+  elasticsearch_config:
+  elasticsearch_data:
+  kibana_config:
+  kibana_data:
+  logstash_config:
+
+services:
+  elasticsearch:
+    image: elasticsearch:7.17.10
+    environment:
+      - ES_JAVA_OPTS=-Xmx256m -Xms256m
+      - discovery.type=single-node
+      - node.name=elasticsearch
+      - bootstrap.memory_lock=true
+      - ELASTIC_USERNAME=elastic
+      - ELASTIC_PASSWORD=elastic
+      - xpack.monitoring.collection.enabled=true
+      - xpack.security.enabled=true
+    networks:
+      - sam-network
+    volumes:
+      - elasticsearch_config:/usr/share/elasticsearch/config
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    ports:
+      - 9106:9200
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 4s
+      resources:
+        limits:
+          cpus: "4"
+          memory: 2G
+    logging:
+      options:
+        max-file: 3
+        max-size: 1G
+
+  logstash:
+    image: logstash:7.17.10
+    environment:
+      - ES_JAVA_OPTS=-Xmx256m -Xms256m
+      - xpack.monitoring.elasticsearch.hosts=http://elasticsearch:9200
+      - xpack.monitoring.elasticsearch.username=elastic
+      - xpack.monitoring.elasticsearch.password=elastic
+      - ELASTIC_Host=http://elasticsearch:9200
+      - ELASTIC_USERNAME=elastic
+      - ELASTIC_PASSWORD=elastic
+      - xpack.monitoring.enabled=true
+    networks:
+      - sam-network
+    volumes:
+      - logstash_config:/usr/share/logstash
+    ports:
+      - 5144:5144
+      - 5144:5144/udp
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 4s
+      resources:
+        limits:
+          cpus: "2"
+          memory: 2G
+    logging:
+      options:
+        max-file: 3
+        max-size: 1G
+
+  kibana:
+    image: kibana:7.17.10
+    environment:
+      - server.name=kibana
+      - elasticsearch.hosts=http://elasticsearch:9200
+      - server.publicBaseUrl=http://172.16.41.254:9107
+      - elasticsearch.username=elastic
+      - elasticsearch.password=elastic
+      - ELASTICSEARCH_USERNAME=elastic
+      - ELASTICSEARCH_PASSWORD=elastic
+      - xpack.security.enabled=true
+      - monitoring.ui.container.elasticsearch.enabled=true
+    networks:
+      - sam-network
+    volumes:
+      - kibana_config:/usr/share/kibana/config
+      - kibana_data:/usr/share/kibana/data
+    ports:
+      - 9107:5601
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 4s
+      resources:
+        limits:
+          cpus: "2"
+          memory: 2G
+    logging:
+      options:
+        max-file: 3
+        max-size: 1G
