@@ -26,6 +26,8 @@ services:
     volumes:
       - elasticsearch_config:/usr/share/elasticsearch/config
       - elasticsearch_data:/usr/share/elasticsearch/data
+      - "/etc/localtime:/etc/localtime:ro"
+      - "/etc/timezone:/etc/timezone:ro"
     ulimits:
       memlock:
         soft: -1
