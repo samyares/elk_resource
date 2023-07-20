@@ -5,7 +5,8 @@ ElasticSearch:
   * u can make love with X-Pack to have features like security, alerting, reporting, ml, and ... (important features are paid)
   * just JSON file can save on elastic
   -indices -> elastic organize data into indices. each index is a collection of JSON
-  -shard -> elastic split indices into shards for distribution across nodes in the cluster. for example, 400GB index split into 40Gb ten shards
+  * you can set replica for each index
+  - shard -> elastic split indices into shards for distribution across nodes in the cluster. for example, 400GB index split into 40Gb ten shards
   * u can set temp on each node in cluster and set replica on each temp. for nodes that have good storage speed set temp label "hot" and for another set "warm" 
   * for generating SSL cert and clustering check episode 6
   * important compose ENV
